@@ -5,4 +5,14 @@ decoder.readlines = function(s)
   return s:gmatch("(.-)\n")
 end
 
+decoder.decode = function(content)
+  local playlist = {}
+  for line in decoder.readlines(content) do
+    if line:match("#EXT%-X%-VERSION:%d") then
+      playlist.version = tonumber(line:match("%d"))
+    end
+  end
+  return playlist
+end
+
 return decoder
