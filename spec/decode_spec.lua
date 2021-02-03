@@ -20,6 +20,14 @@ describe("playlist reader", function()
 end)
 
 describe("playlist parser", function()
+  it("should parse attributes list", function()
+    local line = "PROGRAM-ID=1,BANDWIDTH=346000,RESOLUTION=384x216"
+    local attributes = decoder.parse_attributes(line)
+    assert.are.same(attributes["PROGRAM-ID"], "1")
+    assert.are.same(attributes["BANDWIDTH"], "346000")
+    assert.are.same(attributes["RESOLUTION"], "384x216")
+  end)
+
   it("should decode a master playlist", function()
     local playlist = decoder.decode(read_playlist("spec/samples/master.m3u8"))
     assert.are.same(playlist.version, 3)
