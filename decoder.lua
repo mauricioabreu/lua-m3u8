@@ -51,14 +51,21 @@ decoder.parse_attributes = function(line)
 end
 
 decoder.decode = function(content)
-  local playlist = {}
+  local playlist = {["variants"] = {}}
+  local curr_tag = {}
+  local variant = {}
   for line in decoder.readlines(content) do
     if line:match("#EXT%-X%-VERSION:%d") then
       playlist.version = tonumber(line:match("%d"))
     end
     if line:match("#EXT%-X%-STREAM%-INF:.+") then
-      local attributes = decoder.parse_attributes(split_attributes(line))
-      print(attributes)
+      curr_tag.stream_inf = true
+      variant.attributes = decoder.parse_attributes(split_attributes(line))
+      table.insert(playlist.variants, variant)
+    end
+    if curr_tag.stream_inf and string.sub(line, 1, 1) ~= "#" then
+      curr_tag.stream_inf = false
+      variant.uri = line
     end
   end
   return playlist
