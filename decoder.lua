@@ -65,7 +65,7 @@ decoder.decode = function(content)
     end
     if curr_tag.stream_inf and string.sub(line, 1, 1) ~= "#" then
       curr_tag.stream_inf = false
-      variant.uri = line
+      variant["URI"] = line
     end
   end
   return playlist
