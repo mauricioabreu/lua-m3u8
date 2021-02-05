@@ -41,4 +41,15 @@ describe("playlist parser", function()
     }
     assert.are.same(playlist.variants, expected_variants)
   end)
+
+  it("should decode a master playlist with iframes", function()
+    local playlist = decoder.decode(read_playlist("spec/samples/master_with_iframes.m3u8"))
+    local expected_iframes = {
+      {["URI"] = "low/iframe.m3u8", ["BANDWIDTH"] = "86000", ["PROGRAM-ID"] = "1", ["CODECS"] = "c1", ["RESOLUTION"] = "1x1", ["VIDEO"] = "1"},
+      {["URI"] = "mid/iframe.m3u8", ["BANDWIDTH"] = "150000", ["PROGRAM-ID"] = "1", ["CODECS"] = "c2", ["RESOLUTION"] = "2x2", ["VIDEO"] = "2"},
+      {["URI"] = "hi/iframe.m3u8", ["BANDWIDTH"] = "550000", ["PROGRAM-ID"] = "1", ["CODECS"] = "c2", ["RESOLUTION"] = "2x2", ["VIDEO"] = "2"},
+      {["URI"] = "hi/iframe.m3u8", ["BANDWIDTH"] = "86000", ["PROGRAM-ID"] = "1", ["CODECS"] = "c2", ["RESOLUTION"] = "2x2", ["VIDEO"] = "2"},
+    }
+    assert.are.same(playlist.iframes, expected_iframes)
+  end)
 end)

@@ -51,7 +51,7 @@ decoder.parse_attributes = function(line)
 end
 
 decoder.decode = function(content)
-  local playlist = {["variants"] = {}}
+  local playlist = {["variants"] = {}, ["iframes"] = {}}
   local curr_tag = {}
   local variant = {}
   for line in decoder.readlines(content) do
@@ -66,6 +66,10 @@ decoder.decode = function(content)
       curr_tag.stream_inf = false
       variant["URI"] = line
       table.insert(playlist.variants, variant)
+    end
+    if line:match("#EXT%-X%-I%-FRAME%-STREAM%-INF:.+") then
+      variant = decoder.parse_attributes(split_attributes(line))
+      table.insert(playlist.iframes, variant)
     end
   end
   return playlist
