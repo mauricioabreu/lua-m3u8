@@ -51,9 +51,13 @@ decoder.parse_attributes = function(line)
 end
 
 decoder.decode = function(content)
-  local playlist = {["variants"] = {}, ["iframes"] = {}}
+  local playlist = {
+    ["variants"] = {},
+    ["iframes"] = {},
+  }
   local curr_tag = {}
   local variant = {}
+  local alternatives = {}
   for line in decoder.readlines(content) do
     if line:match("#EXT%-X%-VERSION:%d") then
       playlist.version = tonumber(line:match("%d"))
@@ -61,6 +65,10 @@ decoder.decode = function(content)
     if line:match("#EXT%-X%-STREAM%-INF:.+") then
       curr_tag.stream_inf = true
       variant = decoder.parse_attributes(split_attributes(line))
+      if #alternatives > 0 then
+        variant["ALTERNATIVES"] = alternatives
+        alternatives = {}
+      end
     end
     if curr_tag.stream_inf and string.sub(line, 1, 1) ~= "#" then
       curr_tag.stream_inf = false
@@ -70,6 +78,10 @@ decoder.decode = function(content)
     if line:match("#EXT%-X%-I%-FRAME%-STREAM%-INF:.+") then
       variant = decoder.parse_attributes(split_attributes(line))
       table.insert(playlist.iframes, variant)
+    end
+    if line:match("#EXT%-X%-MEDIA:.+") then
+      local alternative = decoder.parse_attributes(split_attributes(line))
+      table.insert(alternatives, alternative)
     end
   end
   return playlist

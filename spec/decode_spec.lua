@@ -52,4 +52,12 @@ describe("playlist parser", function()
     }
     assert.are.same(playlist.iframes, expected_iframes)
   end)
+
+  it("should decode a master playlist with alternatives", function()
+    local playlist = decoder.decode(read_playlist("spec/samples/master_with_alternatives.m3u8"))
+    assert.are.same(#playlist.variants[1]["ALTERNATIVES"], 3)
+    assert.are.same(#playlist.variants[2]["ALTERNATIVES"], 3)
+    assert.are.same(#playlist.variants[3]["ALTERNATIVES"], 3)
+    assert.are.same(playlist.variants[4]["ALTERNATIVES"], nil) -- this one is an audio playlist without alternatives
+  end)
 end)
