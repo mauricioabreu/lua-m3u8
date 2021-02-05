@@ -32,6 +32,7 @@ describe("playlist parser", function()
     local playlist = decoder.decode(read_playlist("spec/samples/master.m3u8"))
     assert.are.same(playlist.version, 3)
     assert.are.same(#playlist.variants, 5)
+    assert.are.same(playlist.independent_segments, false)
     local expected_variants = {
       {["URI"] = "http://example.com/low/index.m3u8", ["BANDWIDTH"] = "150000", ["RESOLUTION"] = "416x234", ["CODECS"] = "avc1.42e00a,mp4a.40.2"},
       {["URI"] = "http://example.com/lo_mid/index.m3u8", ["BANDWIDTH"] = "240000", ["RESOLUTION"] = "416x234", ["CODECS"] = "avc1.42e00a,mp4a.40.2"},
@@ -59,5 +60,10 @@ describe("playlist parser", function()
     assert.are.same(#playlist.variants[2]["ALTERNATIVES"], 3)
     assert.are.same(#playlist.variants[3]["ALTERNATIVES"], 3)
     assert.are.same(playlist.variants[4]["ALTERNATIVES"], nil) -- this one is an audio playlist without alternatives
+  end)
+
+  it("should decode a master playlsit with independent segments", function()
+    local playlist = decoder.decode(read_playlist("spec/samples/master_with_independent_segments.m3u8"))
+    assert.are.same(playlist.independent_segments, true)
   end)
 end)

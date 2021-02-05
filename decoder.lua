@@ -54,6 +54,7 @@ decoder.decode = function(content)
   local playlist = {
     ["variants"] = {},
     ["iframes"] = {},
+    ["independent_segments"] = false,
   }
   local curr_tag = {}
   local variant = {}
@@ -82,6 +83,9 @@ decoder.decode = function(content)
     if line:match("#EXT%-X%-MEDIA:.+") then
       local alternative = decoder.parse_attributes(split_attributes(line))
       table.insert(alternatives, alternative)
+    end
+    if line == "#EXT-X-INDEPENDENT-SEGMENTS" then
+      playlist.independent_segments = true
     end
   end
   return playlist
