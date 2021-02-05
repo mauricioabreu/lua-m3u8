@@ -31,7 +31,7 @@ decoder.parse_attributes = function(line)
       if qt_index == nil then
         return attributes
       end
-      attributes[key] = string.sub(line, 1, qt_index)
+      attributes[key] = string.sub(line, 1, qt_index - 1)
       if qt_index > #line - 3 then
         return attributes
       end
@@ -60,12 +60,12 @@ decoder.decode = function(content)
     end
     if line:match("#EXT%-X%-STREAM%-INF:.+") then
       curr_tag.stream_inf = true
-      variant.attributes = decoder.parse_attributes(split_attributes(line))
-      table.insert(playlist.variants, variant)
+      variant = decoder.parse_attributes(split_attributes(line))
     end
     if curr_tag.stream_inf and string.sub(line, 1, 1) ~= "#" then
       curr_tag.stream_inf = false
       variant["URI"] = line
+      table.insert(playlist.variants, variant)
     end
   end
   return playlist
