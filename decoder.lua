@@ -2,11 +2,6 @@ local text = require "text"
 
 local decoder = {}
 
-decoder.readlines = function(s)
-  if s:sub(-1) ~= "\n" then s = s .. "\n" end
-  return s:gmatch("(.-)\n")
-end
-
 local function split_attributes(tag)
   local si, _ = string.find(tag, ":")
   return string.sub(tag, si + 1, #tag)
@@ -61,7 +56,7 @@ decoder.decode = function(content)
   local curr_tag = {}
   local variant = {}
   local alternatives = {}
-  for line in decoder.readlines(content) do
+  for line in text.readlines(content) do
     line = text.trim(line)
 
     if line:match("#EXT%-X%-VERSION:%d") then
