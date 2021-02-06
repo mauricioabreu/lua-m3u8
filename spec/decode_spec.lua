@@ -22,11 +22,34 @@ describe("playlist parser", function()
     assert.are.same(#playlist.variants, 5)
     assert.are.same(playlist.independent_segments, false)
     local expected_variants = {
-      {["URI"] = "http://example.com/low/index.m3u8", ["BANDWIDTH"] = "150000", ["RESOLUTION"] = "416x234", ["CODECS"] = "avc1.42e00a,mp4a.40.2"},
-      {["URI"] = "http://example.com/lo_mid/index.m3u8", ["BANDWIDTH"] = "240000", ["RESOLUTION"] = "416x234", ["CODECS"] = "avc1.42e00a,mp4a.40.2"},
-      {["URI"] = "http://example.com/hi_mid/index.m3u8", ["BANDWIDTH"] = "440000", ["RESOLUTION"] = "416x234", ["CODECS"] = "avc1.42e00a,mp4a.40.2"},
-      {["URI"] = "http://example.com/high/index.m3u8", ["BANDWIDTH"] = "640000", ["RESOLUTION"] = "640x360", ["CODECS"] = "avc1.42e00a,mp4a.40.2"},
-      {["URI"] = "http://example.com/audio/index.m3u8", ["BANDWIDTH"] = "64000", ["CODECS"] = "mp4a.40.5"},
+      {
+        ["URI"] = "http://example.com/low/index.m3u8",
+        ["BANDWIDTH"] = "150000",
+        ["RESOLUTION"] = "416x234",
+        ["CODECS"] = "avc1.42e00a,mp4a.40.2"
+      },
+      {
+        ["URI"] = "http://example.com/lo_mid/index.m3u8",
+        ["BANDWIDTH"] = "240000",
+        ["RESOLUTION"] = "416x234",
+        ["CODECS"] = "avc1.42e00a,mp4a.40.2"},
+      {
+        ["URI"] = "http://example.com/hi_mid/index.m3u8",
+        ["BANDWIDTH"] = "440000",
+        ["RESOLUTION"] = "416x234",
+        ["CODECS"] = "avc1.42e00a,mp4a.40.2"
+      },
+      {
+        ["URI"] = "http://example.com/high/index.m3u8",
+        ["BANDWIDTH"] = "640000",
+        ["RESOLUTION"] = "640x360",
+        ["CODECS"] = "avc1.42e00a,mp4a.40.2"
+      },
+      {
+        ["URI"] = "http://example.com/audio/index.m3u8",
+        ["BANDWIDTH"] = "64000",
+        ["CODECS"] = "mp4a.40.5"
+      },
     }
     assert.are.same(playlist.variants, expected_variants)
   end)
@@ -34,10 +57,37 @@ describe("playlist parser", function()
   it("should decode a master playlist with iframes", function()
     local playlist = decoder.decode(read_playlist("spec/samples/master_with_iframes.m3u8"))
     local expected_iframes = {
-      {["URI"] = "low/iframe.m3u8", ["BANDWIDTH"] = "86000", ["PROGRAM-ID"] = "1", ["CODECS"] = "c1", ["RESOLUTION"] = "1x1", ["VIDEO"] = "1"},
-      {["URI"] = "mid/iframe.m3u8", ["BANDWIDTH"] = "150000", ["PROGRAM-ID"] = "1", ["CODECS"] = "c2", ["RESOLUTION"] = "2x2", ["VIDEO"] = "2"},
-      {["URI"] = "hi/iframe.m3u8", ["BANDWIDTH"] = "550000", ["PROGRAM-ID"] = "1", ["CODECS"] = "c2", ["RESOLUTION"] = "2x2", ["VIDEO"] = "2"},
-      {["URI"] = "hi/iframe.m3u8", ["BANDWIDTH"] = "86000", ["PROGRAM-ID"] = "1", ["CODECS"] = "c2", ["RESOLUTION"] = "2x2", ["VIDEO"] = "2"},
+      {
+        ["URI"] = "low/iframe.m3u8",
+        ["BANDWIDTH"] = "86000",
+        ["PROGRAM-ID"] = "1",
+        ["CODECS"] = "c1",
+        ["RESOLUTION"] = "1x1",
+        ["VIDEO"] = "1"
+      },
+      {
+        ["URI"] = "mid/iframe.m3u8",
+        ["BANDWIDTH"] = "150000",
+        ["PROGRAM-ID"] = "1",
+        ["CODECS"] = "c2",
+        ["RESOLUTION"] = "2x2",
+        ["VIDEO"] = "2"
+      },
+      {
+        ["URI"] = "hi/iframe.m3u8",
+        ["BANDWIDTH"] = "550000",
+        ["PROGRAM-ID"] = "1",
+        ["CODECS"] = "c2",
+        ["RESOLUTION"] = "2x2",
+        ["VIDEO"] = "2"
+      },
+      {
+        ["URI"] = "hi/iframe.m3u8",
+        ["BANDWIDTH"] = "86000",
+        ["PROGRAM-ID"] = "1",
+        ["CODECS"] = "c2",
+        ["RESOLUTION"] = "2x2",
+        ["VIDEO"] = "2"}
     }
     assert.are.same(playlist.iframes, expected_iframes)
   end)
