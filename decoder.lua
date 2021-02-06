@@ -1,3 +1,5 @@
+local text = require "text"
+
 local decoder = {}
 
 decoder.readlines = function(s)
@@ -60,6 +62,8 @@ decoder.decode = function(content)
   local variant = {}
   local alternatives = {}
   for line in decoder.readlines(content) do
+    line = text.trim(line)
+
     if line:match("#EXT%-X%-VERSION:%d") then
       playlist.version = tonumber(line:match("%d"))
     end
