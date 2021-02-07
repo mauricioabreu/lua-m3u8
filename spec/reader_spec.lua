@@ -1,4 +1,4 @@
-local decoder = require "decoder"
+local parser = require "parser"
 
 local function read_playlist(f)
   local file = assert(io.open(f, "rb"))
@@ -10,14 +10,14 @@ end
 describe("playlist parser", function()
   it("should parse attributes list", function()
     local line = "PROGRAM-ID=1,BANDWIDTH=346000,RESOLUTION=384x216"
-    local attributes = decoder.parse_attributes(line)
+    local attributes = parser.parse_attributes(line)
     assert.are.same(attributes["PROGRAM-ID"], "1")
     assert.are.same(attributes["BANDWIDTH"], "346000")
     assert.are.same(attributes["RESOLUTION"], "384x216")
   end)
 
-  it("should decode a master playlist", function()
-    local playlist = decoder.decode(read_playlist("spec/samples/master.m3u8"))
+  it("should parse a master playlist", function()
+    local playlist = parser.parse(read_playlist("spec/samples/master.m3u8"))
     assert.are.same(playlist.version, 3)
     assert.are.same(#playlist.variants, 5)
     assert.are.same(playlist.independent_segments, false)
@@ -54,8 +54,8 @@ describe("playlist parser", function()
     assert.are.same(playlist.variants, expected_variants)
   end)
 
-  it("should decode a master playlist with iframes", function()
-    local playlist = decoder.decode(read_playlist("spec/samples/master_with_iframes.m3u8"))
+  it("should parse a master playlist with iframes", function()
+    local playlist = parser.parse(read_playlist("spec/samples/master_with_iframes.m3u8"))
     local expected_iframes = {
       {
         ["URI"] = "low/iframe.m3u8",
@@ -93,16 +93,16 @@ describe("playlist parser", function()
     assert.are.same(playlist.iframes, expected_iframes)
   end)
 
-  it("should decode a master playlist with alternatives", function()
-    local playlist = decoder.decode(read_playlist("spec/samples/master_with_alternatives.m3u8"))
+  it("should parse a master playlist with alternatives", function()
+    local playlist = parser.parse(read_playlist("spec/samples/master_with_alternatives.m3u8"))
     assert.are.same(#playlist.variants[1]["ALTERNATIVES"], 3)
     assert.are.same(#playlist.variants[2]["ALTERNATIVES"], 3)
     assert.are.same(#playlist.variants[3]["ALTERNATIVES"], 3)
     assert.are.same(playlist.variants[4]["ALTERNATIVES"], nil) -- this one is an audio playlist without alternatives
   end)
 
-  it("should decode a master playlsit with independent segments", function()
-    local playlist = decoder.decode(read_playlist("spec/samples/master_with_independent_segments.m3u8"))
+  it("should parse a master playlsit with independent segments", function()
+    local playlist = parser.parse(read_playlist("spec/samples/master_with_independent_segments.m3u8"))
     assert.are.same(playlist.independent_segments, true)
   end)
 end)

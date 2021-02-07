@@ -1,13 +1,13 @@
 local text = require "text"
 
-local decoder = {}
+local parser = {}
 
 local function split_attributes(tag)
   local si, _ = string.find(tag, ":")
   return string.sub(tag, si + 1, #tag)
 end
 
-decoder.parse_attributes = function(line)
+parser.parse_attributes = function(line)
   local attributes = {}
   repeat
     local eq_index = string.find(line, "=")
@@ -47,7 +47,7 @@ decoder.parse_attributes = function(line)
   until line == ""
 end
 
-local decode_formats = {
+local formats = {
   ["PROGRAM-ID"] = tonumber,
   ["BANDWIDTH"] = tonumber,
   ["AVERAGE-BANDWIDTH"] = tonumber,
@@ -58,7 +58,7 @@ local decode_formats = {
 local function parse(tbl)
   local t = {}
   for k, v in pairs(tbl) do
-    local f = decode_formats[k]
+    local f = formats[k]
     if f ~= nil then
       t[k] = f(v)
     else
@@ -68,7 +68,7 @@ local function parse(tbl)
   return t
 end
 
-decoder.decode = function(content)
+parser.parse = function(content)
   local playlist = {
     ["variants"] = {},
     ["iframes"] = {},
@@ -85,7 +85,7 @@ decoder.decode = function(content)
     end
     if line:match("#EXT%-X%-STREAM%-INF:.+") then
       curr_tag.stream_inf = true
-      variant = decoder.parse_attributes(split_attributes(line))
+      variant = parser.parse_attributes(split_attributes(line))
       if #alternatives > 0 then
         variant["ALTERNATIVES"] = alternatives
         alternatives = {}
@@ -97,11 +97,11 @@ decoder.decode = function(content)
       table.insert(playlist.variants, parse(variant))
     end
     if line:match("#EXT%-X%-I%-FRAME%-STREAM%-INF:.+") then
-      variant = decoder.parse_attributes(split_attributes(line))
+      variant = parser.parse_attributes(split_attributes(line))
       table.insert(playlist.iframes, parse(variant))
     end
     if line:match("#EXT%-X%-MEDIA:.+") then
-      local alternative = decoder.parse_attributes(split_attributes(line))
+      local alternative = parser.parse_attributes(split_attributes(line))
       table.insert(alternatives, parse(alternative))
     end
     if line == "#EXT-X-INDEPENDENT-SEGMENTS" then
@@ -111,4 +111,4 @@ decoder.decode = function(content)
   return playlist
 end
 
-return decoder
+return parser
