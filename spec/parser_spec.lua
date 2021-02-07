@@ -1,11 +1,7 @@
-local parser = require "parser"
+package.path = package.path .. ';spec/?.lua'
 
-local function read_playlist(f)
-  local file = assert(io.open(f, "rb"))
-  local content = file:read("*all") -- read whole file
-  file:close()
-  return content
-end
+local file = require "file"
+local parser = require "parser"
 
 describe("playlist parser", function()
   it("should parse attributes list", function()
@@ -17,7 +13,7 @@ describe("playlist parser", function()
   end)
 
   it("should parse a master playlist", function()
-    local playlist = parser.parse(read_playlist("spec/samples/master.m3u8"))
+    local playlist = parser.parse(file.read("spec/samples/master.m3u8"))
     assert.are.same(playlist.version, 3)
     assert.are.same(#playlist.variants, 5)
     assert.are.same(playlist.independent_segments, false)
@@ -55,7 +51,7 @@ describe("playlist parser", function()
   end)
 
   it("should parse a master playlist with iframes", function()
-    local playlist = parser.parse(read_playlist("spec/samples/master_with_iframes.m3u8"))
+    local playlist = parser.parse(file.read("spec/samples/master_with_iframes.m3u8"))
     local expected_iframes = {
       {
         ["URI"] = "low/iframe.m3u8",
@@ -94,7 +90,7 @@ describe("playlist parser", function()
   end)
 
   it("should parse a master playlist with alternatives", function()
-    local playlist = parser.parse(read_playlist("spec/samples/master_with_alternatives.m3u8"))
+    local playlist = parser.parse(file.read("spec/samples/master_with_alternatives.m3u8"))
     assert.are.same(#playlist.variants[1]["ALTERNATIVES"], 3)
     assert.are.same(#playlist.variants[2]["ALTERNATIVES"], 3)
     assert.are.same(#playlist.variants[3]["ALTERNATIVES"], 3)
@@ -102,7 +98,7 @@ describe("playlist parser", function()
   end)
 
   it("should parse a master playlsit with independent segments", function()
-    local playlist = parser.parse(read_playlist("spec/samples/master_with_independent_segments.m3u8"))
+    local playlist = parser.parse(file.read("spec/samples/master_with_independent_segments.m3u8"))
     assert.are.same(playlist.independent_segments, true)
   end)
 end)
