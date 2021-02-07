@@ -47,6 +47,27 @@ decoder.parse_attributes = function(line)
   until line == ""
 end
 
+local decode_formats = {
+  ["PROGRAM-ID"] = tonumber,
+  ["BANDWIDTH"] = tonumber,
+  ["AVERAGE-BANDWIDTH"] = tonumber,
+  ["FRAME-RATE"] = tonumber,
+  ["VIDEO"] = tonumber
+}
+
+local function parse(tbl)
+  local t = {}
+  for k, v in pairs(tbl) do
+    local f = decode_formats[k]
+    if f ~= nil then
+      t[k] = f(v)
+    else
+      t[k] = v
+    end
+  end
+  return t
+end
+
 decoder.decode = function(content)
   local playlist = {
     ["variants"] = {},
@@ -73,15 +94,15 @@ decoder.decode = function(content)
     if curr_tag.stream_inf and string.sub(line, 1, 1) ~= "#" then
       curr_tag.stream_inf = false
       variant["URI"] = line
-      table.insert(playlist.variants, variant)
+      table.insert(playlist.variants, parse(variant))
     end
     if line:match("#EXT%-X%-I%-FRAME%-STREAM%-INF:.+") then
       variant = decoder.parse_attributes(split_attributes(line))
-      table.insert(playlist.iframes, variant)
+      table.insert(playlist.iframes, parse(variant))
     end
     if line:match("#EXT%-X%-MEDIA:.+") then
       local alternative = decoder.parse_attributes(split_attributes(line))
-      table.insert(alternatives, alternative)
+      table.insert(alternatives, parse(alternative))
     end
     if line == "#EXT-X-INDEPENDENT-SEGMENTS" then
       playlist.independent_segments = true
