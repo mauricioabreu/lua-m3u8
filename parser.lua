@@ -1,3 +1,4 @@
+local data = require "data"
 local text = require "text"
 
 local parser = {}
@@ -8,7 +9,7 @@ local function split_attributes(tag)
 end
 
 parser.parse_attributes = function(line)
-  local attributes = {}
+  local attributes = data.ordered_table()
   repeat
     local eq_index = string.find(line, "=")
     if eq_index == nil then
@@ -56,16 +57,15 @@ local formats = {
 }
 
 local function parse(tbl)
-  local t = {}
-  for k, v in pairs(tbl) do
+  for k, v in tbl:opairs() do
     local f = formats[k]
     if f ~= nil then
-      t[k] = f(v)
+      tbl[k] = f(v)
     else
-      t[k] = v
+      tbl[k] = v
     end
   end
-  return t
+  return tbl
 end
 
 parser.parse = function(content)
