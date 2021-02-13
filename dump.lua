@@ -5,7 +5,8 @@ local function quote(s)
 end
 
 local variant_formats = {
-  ["CODECS"] = quote
+  ["CODECS"] = quote,
+  ["VIDEO"] = quote,
 }
 
 local iframe_formats = {
@@ -13,13 +14,32 @@ local iframe_formats = {
   ["URI"] = quote,
   ["RESOLUTION"] = quote,
   ["VIDEO"] = quote,
+}
 
+local alternative_formats = {
+  ["URI"] = quote,
+  ["NAME"] = quote,
+  ["GROUP-ID"] = quote,
 }
 
 local function dump_variant(variant)
-  local o = "#EXT-X-STREAM-INF:"
+  local o = ""
+  if variant["ALTERNATIVES"] ~= nil then
+    for _, a in pairs(variant["ALTERNATIVES"]) do
+      o = o .. "#EXT-X-MEDIA:"
+      for k, v in a:opairs() do
+        if alternative_formats[k] then
+          v = alternative_formats[k](v)
+        end
+        o = o .. k .. "=" .. v .. ","
+      end
+      o = string.sub(o, 1, #o - 1) .. "\n"
+    end
+  end
+
+  o = o .. "#EXT-X-STREAM-INF:"
   for k, v in variant:opairs() do
-    if k ~= "URI" then
+    if k ~= "URI" and k ~= "ALTERNATIVES" then
       if variant_formats[k] then
         v = variant_formats[k](v)
       end

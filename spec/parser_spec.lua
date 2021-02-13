@@ -59,7 +59,7 @@ describe("playlist parser", function()
         ["PROGRAM-ID"] = 1,
         ["CODECS"] = "c1",
         ["RESOLUTION"] = "1x1",
-        ["VIDEO"] = 1
+        ["VIDEO"] = "1"
       },
       {
         ["URI"] = "mid/iframe.m3u8",
@@ -67,7 +67,7 @@ describe("playlist parser", function()
         ["PROGRAM-ID"] = 1,
         ["CODECS"] = "c2",
         ["RESOLUTION"] = "2x2",
-        ["VIDEO"] = 2
+        ["VIDEO"] = "2"
       },
       {
         ["URI"] = "hi/iframe.m3u8",
@@ -75,7 +75,7 @@ describe("playlist parser", function()
         ["PROGRAM-ID"] = 1,
         ["CODECS"] = "c2",
         ["RESOLUTION"] = "2x2",
-        ["VIDEO"] = 2
+        ["VIDEO"] = "2"
       },
       {
         ["URI"] = "hi/iframe.m3u8",
@@ -83,7 +83,7 @@ describe("playlist parser", function()
         ["PROGRAM-ID"] = 1,
         ["CODECS"] = "c2",
         ["RESOLUTION"] = "2x2",
-        ["VIDEO"] = 2
+        ["VIDEO"] = "2"
       }
     }
     assert.are.same(playlist.iframes, expected_iframes)

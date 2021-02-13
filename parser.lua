@@ -53,10 +53,9 @@ local formats = {
   ["BANDWIDTH"] = tonumber,
   ["AVERAGE-BANDWIDTH"] = tonumber,
   ["FRAME-RATE"] = tonumber,
-  ["VIDEO"] = tonumber
 }
 
-local function parse(tbl)
+local function formatter(tbl, formats)
   for k, v in tbl:opairs() do
     local f = formats[k]
     if f ~= nil then
@@ -67,6 +66,11 @@ local function parse(tbl)
   end
   return tbl
 end
+
+local function format(tbl)
+  return formatter(tbl, formats)
+end
+
 
 parser.parse = function(content)
   local playlist = {
@@ -94,15 +98,15 @@ parser.parse = function(content)
     if curr_tag.stream_inf and string.sub(line, 1, 1) ~= "#" then
       curr_tag.stream_inf = false
       variant["URI"] = line
-      table.insert(playlist.variants, parse(variant))
+      table.insert(playlist.variants, format(variant))
     end
     if line:match("#EXT%-X%-I%-FRAME%-STREAM%-INF:.+") then
       variant = parser.parse_attributes(split_attributes(line))
-      table.insert(playlist.iframes, parse(variant))
+      table.insert(playlist.iframes, format(variant))
     end
     if line:match("#EXT%-X%-MEDIA:.+") then
       local alternative = parser.parse_attributes(split_attributes(line))
-      table.insert(alternatives, parse(alternative))
+      table.insert(alternatives, format(alternative))
     end
     if line == "#EXT-X-INDEPENDENT-SEGMENTS" then
       playlist.independent_segments = true
