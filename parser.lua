@@ -8,6 +8,10 @@ local function split_attributes(tag)
   return string.sub(tag, si + 1, #tag)
 end
 
+-- Certain tags have values that are attribute-list
+-- an attribute list is a comma-separated list of attribute/value
+-- pairs with no whitespace.
+-- https://tools.ietf.org/html/rfc8216#section-4.2
 parser.parse_attributes = function(line)
   local attributes = data.ordered_table()
   repeat
