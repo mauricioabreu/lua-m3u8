@@ -59,9 +59,9 @@ local formats = {
   ["FRAME-RATE"] = tonumber,
 }
 
-local function formatter(tbl, formats)
+local function formatter(tbl, fmts)
   for k, v in tbl:opairs() do
-    local f = formats[k]
+    local f = fmts[k]
     if f ~= nil then
       tbl[k] = f(v)
     else
@@ -74,7 +74,6 @@ end
 local function format(tbl)
   return formatter(tbl, formats)
 end
-
 
 parser.parse = function(content)
   local playlist = {

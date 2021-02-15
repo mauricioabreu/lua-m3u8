@@ -15,11 +15,11 @@ data.ordered_table = function(t)
     -- traversal of table ordered: returning key,value
     opairs = function(self)
       local i = 0
-      local function iter(self)
+      local function iter(s)
           i = i + 1
-          local k = self._korder[i]
+          local k = s._korder[i]
           if k then
-            return k, self[k]
+            return k, s[k]
           end
       end
       return iter, self
