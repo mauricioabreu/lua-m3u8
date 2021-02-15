@@ -3,6 +3,56 @@ local text = require "text"
 
 local parser = {}
 
+local MASTER = "master"
+local MEDIA = "media"
+
+local identity_tags = {
+  ["#EXT-X-STREAM-INF"] = MASTER,
+  ["#EXT-X-I-FRAME-STREAM-INF"] = MASTER,
+  ["#EXT-X-MEDIA-SEQUENCE"] = MEDIA,
+  ["#EXT-X-SESSION-KEY"] = MASTER,
+  ["#EXT-X-SESSION-DATA"] = MASTER,
+  ["#EXT-X-MEDIA"] = MEDIA,
+  ["#EXT-X-TARGETDURATION"] = MEDIA,
+  ["#EXT-X-DISCONTINUITY-SEQUENCE"] = MEDIA,
+  ["#EXT-X-ENDLIST"] = MEDIA,
+  ["#EXT-X-PLAYLIST-TYPE"] = MEDIA,
+  ["#EXT-X-I-FRAMES-ONLY"] = MEDIA,
+  ["#EXTINF"] = MEDIA,
+  ["#EXT-X-BYTERANGE"] = MEDIA,
+  ["#EXT-X-DISCONTINUITY"] = MEDIA,
+  ["#EXT-X-KEY"] = MEDIA,
+  ["#EXT-X-MAP"] = MEDIA,
+  ["#EXT-X-PROGRAM-DATE-TIME"] = MEDIA,
+  ["#EXT-X-DATERANGE"] = MEDIA,
+}
+
+local function is_master_tag(line)
+  local tag = text.split(line, "[^:]*")[1]
+  local found_tag = identity_tags[tag]
+  if found_tag == nil then
+    return nil
+  else
+    return found_tag == MASTER
+  end
+end
+
+local function has_master_tag(content)
+  local is_master = nil -- tags may not be found
+
+  for line in text.readlines(content) do
+    is_master = is_master_tag(line)
+    if is_master ~= nil then
+      return is_master
+    end
+  end
+end
+
+-- define if playlist is master or media
+parser.is_master_playlist = function(content)
+  return has_master_tag(content)
+end
+
 local function split_attributes(tag)
   local si, _ = string.find(tag, ":")
   return string.sub(tag, si + 1, #tag)

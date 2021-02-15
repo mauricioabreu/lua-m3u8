@@ -97,8 +97,18 @@ describe("playlist parser", function()
     assert.are.same(playlist.variants[4]["ALTERNATIVES"], nil) -- this one is an audio playlist without alternatives
   end)
 
-  it("should parse a master playlsit with independent segments", function()
+  it("should parse a master playlist with independent segments", function()
     local playlist = parser.parse(file.read("spec/samples/master_with_independent_segments.m3u8"))
     assert.are.same(playlist.independent_segments, true)
+  end)
+
+  it("should define playlist as master", function()
+    local playlist = file.read("spec/samples/master.m3u8")
+    assert.are.same(parser.is_master_playlist(playlist), true)
+  end)
+
+  it("should define playlist not as master", function()
+    local playlist = file.read("spec/samples/media.m3u8")
+    assert.are.same(parser.is_master_playlist(playlist), false)
   end)
 end)

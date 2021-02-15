@@ -20,3 +20,12 @@ describe("readlines", function()
     assert.are.same(#lines, 5)
   end)
 end)
+
+describe("split", function()
+  it("should split text based on pattern", function()
+    local s = "foo:bar baz"
+    local res = text.split(s, "[^:]*")
+    assert.are.same(res[1], "foo")
+    assert.are.same(res[2], "bar baz")
+  end)
+end)

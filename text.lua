@@ -9,4 +9,11 @@ text.readlines = function(s)
   return s:gmatch("(.-)\n")
 end
 
+-- split string based on pattern
+text.split = function(s, p)
+  local tbl = {}
+  s:gsub(p, function(x) tbl[#tbl + 1] = x end)
+  return tbl
+end
+
 return text
