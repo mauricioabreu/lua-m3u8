@@ -30,11 +30,10 @@ local identity_tags = {
 local function is_master_tag(line)
   local tag = text.split(line, "[^:]*")[1]
   local found_tag = identity_tags[tag]
-  if found_tag == nil then
-    return nil
-  else
+  if found_tag ~= nil then
     return found_tag == MASTER
   end
+  return nil
 end
 
 local function has_master_tag(content)
