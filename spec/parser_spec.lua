@@ -102,6 +102,11 @@ describe("playlist parser", function()
     assert.are.same(playlist.independent_segments, true)
   end)
 
+  it("should parse a media playlist", function()
+    local playlist = parser.parse_media_playlist(file.read("spec/samples/media.m3u8"))
+    assert.are.same(#playlist.segments, 4)
+  end)
+
   it("should define playlist as master", function()
     local playlist = file.read("spec/samples/master.m3u8")
     assert.are.same(parser.is_master_playlist(playlist), true)
