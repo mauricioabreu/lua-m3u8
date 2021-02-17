@@ -188,7 +188,11 @@ parser.parse_media_playlist = function(content)
   local curr_tag = {}
   local duration = nil
   local title = nil
+  local segment = {}
   for line in text.readlines(content) do
+    if line:match("#EXT%-X%-VERSION:%d") then
+      playlist.version = tonumber(line:match("%d"))
+    end
     if line:match("#EXTINF:.+") then
       curr_tag.extinf = true
       local si, _ = line:find(",")
@@ -196,13 +200,20 @@ parser.parse_media_playlist = function(content)
       if #line > si then -- #EXTINF:2.002,338559 <duration>,<title>
         title = string.sub(line, si + 1, #line)
       end
-      local segment = {["uri"] = line, ["duration"] = duration, ["title"] = title}
+      segment = {["duration"] = duration, ["title"] = title}
       table.insert(playlist["segments"], segment)
     end
     if string.sub(line, 1, 1) ~= "#" then
       if curr_tag.extinf then
+        segment["uri"] = line
         curr_tag.extinf = false
       end
+    end
+    if line:match("#EXT%-X%-TARGETDURATION:.+") then
+      playlist.target_duration = tonumber(string.sub(line, 23, #line))
+    end
+    if line:match("#EXT%-X%-MEDIA%-SEQUENCE:.+") then
+      playlist.media_sequence = tonumber(string.sub(line, 23, #line))
     end
   end
   return playlist
