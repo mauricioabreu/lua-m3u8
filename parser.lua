@@ -190,6 +190,8 @@ parser.parse_media_playlist = function(content)
   local title = nil
   local segment = {}
   for line in text.readlines(content) do
+    line = text.trim(line)
+
     if line:match("#EXT%-X%-VERSION:%d") then
       playlist.version = tonumber(line:match("%d"))
     end
