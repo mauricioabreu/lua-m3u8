@@ -124,6 +124,9 @@ local function format(tbl)
   return formatter(tbl, formats)
 end
 
+-- parse m3u8 playlist
+-- parsed playlist could be a master or media playlist
+-- playlist with an undefined type will result in errors
 parser.parse = function(content)
   local is_master = parser.is_master_playlist(content)
   if  is_master == nil then
