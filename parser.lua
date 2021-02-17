@@ -12,7 +12,7 @@ local identity_tags = {
   ["#EXT-X-MEDIA-SEQUENCE"] = MEDIA,
   ["#EXT-X-SESSION-KEY"] = MASTER,
   ["#EXT-X-SESSION-DATA"] = MASTER,
-  ["#EXT-X-MEDIA"] = MEDIA,
+  ["#EXT-X-MEDIA"] = MASTER,
   ["#EXT-X-TARGETDURATION"] = MEDIA,
   ["#EXT-X-DISCONTINUITY-SEQUENCE"] = MEDIA,
   ["#EXT-X-ENDLIST"] = MEDIA,
@@ -125,6 +125,19 @@ local function format(tbl)
 end
 
 parser.parse = function(content)
+  local is_master = parser.is_master_playlist(content)
+  if  is_master == nil then
+    return nil
+  else
+    if is_master then
+      return parser.parse_master_playlist(content)
+    else
+      return parser.parse_media_playlist(content)
+    end
+  end
+end
+
+parser.parse_master_playlist = function(content)
   local playlist = {
     ["variants"] = {},
     ["iframes"] = {},

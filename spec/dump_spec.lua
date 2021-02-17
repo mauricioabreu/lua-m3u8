@@ -19,7 +19,7 @@ describe("dump playlist", function()
     assert.are.same(content, output)
   end)
 
-  it("should dump a master playlist with alternatives #foo", function()
+  it("should dump a master playlist with alternatives", function()
     local content = file.read("spec/samples/master_with_alternatives.m3u8")
     local playlist = parser.parse(content)
     local output = dump.dump(playlist)
