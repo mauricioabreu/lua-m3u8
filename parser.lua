@@ -215,6 +215,12 @@ parser.parse_media_playlist = function(content)
     if line:match("#EXT%-X%-MEDIA%-SEQUENCE:.+") then
       playlist.media_sequence = tonumber(string.sub(line, 23, #line))
     end
+    if line:match("#EXT%-X%-PLAYLIST%-TYPE:.+") then
+      playlist.playlist_type = string.sub(line, 22, #line)
+    end
+    if line:match("EXT%-X%-DISCONTINUITY%-SEQUENCE:.+") then
+      playlist.discontinuity_sequence = tonumber(string.sub(line, 31, #line))
+    end
   end
   return playlist
 end

@@ -110,6 +110,8 @@ describe("playlist parser", function()
     assert.are.same(playlist.segments[1].title, "338559")
     assert.are.same(playlist.target_duration, 3)
     assert.are.same(playlist.media_sequence, 22)
+    assert.are.same(playlist.playlist_type, "EVENT")
+    assert.are.same(playlist.discontinuity_sequence, 20)
   end)
 
   it("should define playlist as master", function()
