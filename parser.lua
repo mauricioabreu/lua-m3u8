@@ -231,10 +231,10 @@ parser.parse_media_playlist = function(content)
     if line:match("#EXT%-X%-PLAYLIST%-TYPE:.+") then
       playlist.playlist_type = string.sub(line, 22, #line)
     end
-    if line:match("EXT%-X%-DISCONTINUITY%-SEQUENCE:.+") then
+    if line:match("#EXT%-X%-DISCONTINUITY%-SEQUENCE:.+") then
       playlist.discontinuity_sequence = tonumber(string.sub(line, 31, #line))
     end
-    if line:match("EXT%-X%-KEY:.+") then
+    if line:match("#EXT%-X%-KEY:.+") then
       key = parser.parse_attributes(split_attributes(line))
       curr_tag.key = true
     end
