@@ -104,6 +104,7 @@ describe("playlist parser", function()
 
   it("should parse a media playlist", function()
     local playlist = parser.parse_media_playlist(file.read("spec/samples/media.m3u8"))
+    assert.are.same(playlist.version, 3)
     assert.are.same(#playlist.segments, 4)
     assert.are.same(playlist.segments[1].uri, "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb.ts")
     assert.are.same(playlist.segments[1].duration, 2.002)
@@ -112,6 +113,23 @@ describe("playlist parser", function()
     assert.are.same(playlist.media_sequence, 22)
     assert.are.same(playlist.playlist_type, "EVENT")
     assert.are.same(playlist.discontinuity_sequence, 20)
+  end)
+
+  it("should parse a media playlist with encrypted keys", function()
+    local playlist = parser.parse_media_playlist(file.read("spec/samples/media_with_keys.m3u8"))
+    assert.are.same(#playlist.segments, 4)
+    -- check first segment key
+    assert.are.same(playlist.segments[1].key["METHOD"], "AES-128")
+    assert.are.same(playlist.segments[1].key["URI"], "https://getkeys.com/key?id=123")
+    assert.are.same(playlist.segments[1].key["IV"], "0X10ef8f758ca555115584bb5b3c687f52")
+    -- next segment must have the same key
+    assert.are.same(playlist.segments[2].key["METHOD"], "AES-128")
+    assert.are.same(playlist.segments[2].key["URI"], "https://getkeys.com/key?id=123")
+    assert.are.same(playlist.segments[2].key["IV"], "0X10ef8f758ca555115584bb5b3c687f52")
+    -- check next new key
+    assert.are.same(playlist.segments[3].key["METHOD"], "AES-128")
+    assert.are.same(playlist.segments[3].key["URI"], "https://getkeys.com/key?id=123")
+    assert.are.same(playlist.segments[3].key["IV"], "0Xcafe8f758ca555115584bb5b3c687f52")
   end)
 
   it("should define playlist as master", function()

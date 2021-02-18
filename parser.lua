@@ -189,6 +189,7 @@ parser.parse_media_playlist = function(content)
   local duration = nil
   local title = nil
   local segment = {}
+  local key = {}
   for line in text.readlines(content) do
     line = text.trim(line)
 
@@ -203,12 +204,22 @@ parser.parse_media_playlist = function(content)
         title = string.sub(line, si + 1, #line)
       end
       segment = {["duration"] = duration, ["title"] = title}
+      -- append current key
+      -- EXT-X-KEY tells the client to use the described key in the current
+      -- segment and the next ones until a new EXT-X-KEY appears
+      if key then
+        segment.key = key
+      end
       table.insert(playlist["segments"], segment)
     end
     if string.sub(line, 1, 1) ~= "#" then
       if curr_tag.extinf then
         segment["uri"] = line
         curr_tag.extinf = false
+      end
+      if curr_tag.key then
+        playlist.segments[#playlist.segments].key = key
+        curr_tag.key = false
       end
     end
     if line:match("#EXT%-X%-TARGETDURATION:.+") then
@@ -222,6 +233,10 @@ parser.parse_media_playlist = function(content)
     end
     if line:match("EXT%-X%-DISCONTINUITY%-SEQUENCE:.+") then
       playlist.discontinuity_sequence = tonumber(string.sub(line, 31, #line))
+    end
+    if line:match("EXT%-X%-KEY:.+") then
+      key = parser.parse_attributes(split_attributes(line))
+      curr_tag.key = true
     end
   end
   return playlist
