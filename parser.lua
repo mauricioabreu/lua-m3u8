@@ -221,6 +221,10 @@ parser.parse_media_playlist = function(content)
         playlist.segments[#playlist.segments].key = key
         curr_tag.key = false
       end
+      if curr_tag.discontinuity then
+        curr_tag.discontinuity = false
+        playlist.segments[#playlist.segments].discontinuity = true
+      end
     end
     if line:match("#EXT%-X%-TARGETDURATION:.+") then
       playlist.target_duration = tonumber(string.sub(line, 23, #line))
@@ -230,6 +234,9 @@ parser.parse_media_playlist = function(content)
     end
     if line:match("#EXT%-X%-PLAYLIST%-TYPE:.+") then
       playlist.playlist_type = string.sub(line, 22, #line)
+    end
+    if line == "#EXT-X-DISCONTINUITY" then
+      curr_tag.discontinuity = true
     end
     if line:match("#EXT%-X%-DISCONTINUITY%-SEQUENCE:.+") then
       playlist.discontinuity_sequence = tonumber(string.sub(line, 31, #line))
