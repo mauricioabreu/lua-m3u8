@@ -208,11 +208,11 @@ parser.parse_media_playlist = function(content)
       if key then
         segment.key = key
       end
-      table.insert(playlist["segments"], segment)
     end
     if string.sub(line, 1, 1) ~= "#" then
       if curr_tag.extinf then
         segment["uri"] = line
+        table.insert(playlist["segments"], segment)
         curr_tag.extinf = false
       end
       if curr_tag.key then
