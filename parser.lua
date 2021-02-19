@@ -37,14 +37,13 @@ local function is_master_tag(line)
 end
 
 local function has_master_tag(content)
-  local is_master = nil -- tags may not be found
-
   for line in text.readlines(content) do
-    is_master = is_master_tag(line)
+    local is_master = is_master_tag(line)
     if is_master ~= nil then
       return is_master
     end
   end
+  return nil -- tags may not be found
 end
 
 -- define if playlist is master or media
@@ -186,7 +185,6 @@ end
 parser.parse_media_playlist = function(content)
   local playlist = {["segments"] = {}}
   local curr_tag = {}
-  local duration = nil
   local title = nil
   local segment = {}
   local key = {}
@@ -199,7 +197,7 @@ parser.parse_media_playlist = function(content)
     if line:match("#EXTINF:.+") then
       curr_tag.extinf = true
       local si, _ = line:find(",")
-      duration = tonumber(string.sub(line, 9, si - 1))
+      local duration = tonumber(string.sub(line, 9, si - 1))
       if #line > si then -- #EXTINF:2.002,338559 <duration>,<title>
         title = string.sub(line, si + 1, #line)
       end
